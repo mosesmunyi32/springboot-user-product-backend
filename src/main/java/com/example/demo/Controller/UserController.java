@@ -2,6 +2,9 @@ package com.example.demo.Controller;
 
 import java.util.List;
 
+import com.example.demo.dto.CreateUserRequest;
+import com.example.demo.dto.UserResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,22 +30,25 @@ public class UserController {
 
 
     @PostMapping
-    public User createUser(@Valid @RequestBody User user ) {
-        return userService.createUser(user);
+    public String createUser(@Valid @RequestBody CreateUserRequest user ) {
+       userService.createUser(user);
+       return "User created successfully";
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public List<UserResponse>  getAllUsers() {
+       return userService.getAllUsers().stream().map(userService::toUserResponse).toList();
+
+
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) {
+    public UserResponse getUser(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+    public UserResponse updateUser(@PathVariable Long id, @RequestBody CreateUserRequest updatedUser) {
         return userService.updateUser(id, updatedUser);
     }
 

@@ -5,7 +5,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.demo.dto.CreateProductRequest;
+import com.example.demo.dto.CreateUserRequest;
+import com.example.demo.dto.UserResponse;
 import com.example.demo.exception.UserNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.model.User;
@@ -20,39 +25,57 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public User createUser(CreateUserRequest requestUser) {
+
+        User user = new User();
+        user.setName(requestUser.getName());
+        user.setEmail(requestUser.getEmail());
+        user.setPassword(requestUser.getPassword());
+       return userRepository.save(user);
     }
 
     //get all the users
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<User>  getAllUsers() {
+
+       return userRepository.findAll();
     }
 
-    public User getUserById(Long id) {
-      Optional<User> optionalUser = userRepository.findById(id);
-      return optionalUser.orElseThrow(() -> new UserNotFoundException( "User not found with id: "+ id ));}
+    public UserResponse getUserById(Long id) {
+      User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: "+ id) );
 
-    public User updateUser(Long id, User updatedUser) {
-        Optional<User> optionalUser = userRepository.findById(id);
+      return toUserResponse(user);
 
-        if(optionalUser.isPresent()) {
-            User existingUser = optionalUser.get();
-            existingUser.setName(updatedUser.getName());
-            existingUser.setEmail(updatedUser.getEmail());
-            return userRepository.save(existingUser);
 
-        }
-        return null;
     }
 
-     public String deleteUser(Long id) {
+
+
+    public UserResponse updateUser(Long id, CreateUserRequest updatedUser) {
+        User existingUSer = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with Id: "+ id));
+
+        existingUSer.setName(updatedUser.getName());
+        existingUSer.setEmail(updatedUser.getEmail());
+        existingUSer.setPassword(updatedUser.getPassword());
+
+        User saved = userRepository.save(existingUSer);
+        return toUserResponse(saved);
+
+
+    }
+
+
+    public String deleteUser(Long id) {
     if(userRepository.existsById(id)) {
         userRepository.deleteById(id);
         return "User deleted Successfully";
     }
 
     return "User not found";
+}
+
+public UserResponse toUserResponse(User user) {
+        return new UserResponse(user.getName(), user.getEmail());
+
 }
 
     

@@ -1,7 +1,11 @@
 package com.example.demo.Controller;
 
+import com.example.demo.dto.CreateProductRequest;
+import com.example.demo.dto.ProductResponse;
 import com.example.demo.model.Product;
 import com.example.demo.service.ProductService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,25 +21,28 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    public List<ProductResponse> getAllProducts() {
+        return   productService.getAllProducts();
+
     }
 
     @GetMapping("/{id}")
-    public Product getProduct(@PathVariable Long id ) {
+    public ProductResponse getProduct(@PathVariable Long id ) {
         return productService.getProductById(id);
 
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product createdProduct) {
+    public ProductResponse createProduct(@Valid @RequestBody CreateProductRequest createdProduct) {
         return productService.createProduct(createdProduct);
+
 
     }
 
     @PatchMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
-        return productService.updateProduct(id, updatedProduct);
+    public ProductResponse updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
+       return   productService.updateProduct(id, updatedProduct);
+
 
     }
 
