@@ -16,6 +16,8 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.model.User;
 
 
+
+
 @Service
 public class UserService {
 
@@ -30,7 +32,8 @@ public class UserService {
         User user = new User();
         user.setName(requestUser.getName());
         user.setEmail(requestUser.getEmail());
-        user.setPassword(requestUser.getPassword());
+        user.setPassword( requestUser.getPassword());
+
        return userRepository.save(user);
     }
 
